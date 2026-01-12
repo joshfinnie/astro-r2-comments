@@ -1,0 +1,158 @@
+---
+export interface Props {
+  postId: string;
+  className?: string;
+}
+
+const { postId, className = '' } = Astro.props;
+---
+
+<div class={`comment-list ${className}`} data-post-id={postId}>
+  <h3>Comments</h3>
+  <div class="comments-container">
+    <div class="loading">Loading comments...</div>
+    <div class="error" style="display: none;">Failed to load comments.</div>
+    <div class="empty" style="display: none;">No comments yet. Be the first to comment!</div>
+    <div class="comments"></div>
+  </div>
+</div>
+
+<style>
+  .comment-list {
+    margin: 2rem 0;
+  }
+
+  .comments-container {
+    margin-top: 1rem;
+  }
+
+  .loading,
+  .error,
+  .empty {
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+  }
+
+  .error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+  }
+
+  .comment {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+
+  .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+
+  .comment-author {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .comment-date {
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  .comment-content {
+    color: #333;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+</style>
+
+<script>
+  interface Comment {
+    id: string;
+    postId: string;
+    author: string;
+    content: string;
+    timestamp: number;
+  }
+
+  const container = document.querySelector('.comment-list') as HTMLDivElement;
+  const postId = container?.getAttribute('data-post-id');
+  const loadingEl = container?.querySelector('.loading') as HTMLDivElement;
+  const errorEl = container?.querySelector('.error') as HTMLDivElement;
+  const emptyEl = container?.querySelector('.empty') as HTMLDivElement;
+  const commentsEl = container?.querySelector('.comments') as HTMLDivElement;
+
+  async function loadComments() {
+    if (!postId || !container) return;
+
+    try {
+      loadingEl.style.display = 'block';
+      errorEl.style.display = 'none';
+      emptyEl.style.display = 'none';
+      commentsEl.innerHTML = '';
+
+      const response = await fetch(`/api/comments/${encodeURIComponent(postId)}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+
+      const data = await response.json();
+      const comments: Comment[] = data.comments || [];
+
+      loadingEl.style.display = 'none';
+
+      if (comments.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+
+      commentsEl.innerHTML = comments
+        .map((comment) => {
+          const date = new Date(comment.timestamp);
+          const formattedDate = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+
+          return `
+            <div class="comment" data-comment-id="${comment.id}">
+              <div class="comment-header">
+                <span class="comment-author">${escapeHtml(comment.author)}</span>
+                <span class="comment-date">${formattedDate}</span>
+              </div>
+              <div class="comment-content">${escapeHtml(comment.content)}</div>
+            </div>
+          `;
+        })
+        .join('');
+    } catch (error) {
+      console.error('Error loading comments:', error);
+      loadingEl.style.display = 'none';
+      errorEl.style.display = 'block';
+    }
+  }
+
+  function escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Load comments on page load
+  loadComments();
+
+  // Reload when new comment is posted
+  window.addEventListener('comments:reload', () => {
+    loadComments();
+  });
+</script>

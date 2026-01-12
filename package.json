@@ -1,0 +1,33 @@
+{
+  "name": "astro-r2-comments",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Astro comments that use Cloudflare R2 for storage.",
+  "homepage": "https://github.com/joshfinnie/astro-r2-comments#readme",
+  "bugs": {
+    "url": "https://github.com/joshfinnie/astro-r2-comments/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshfinnie/astro-r2-comments.git"
+  },
+  "license": "MIT",
+  "author": "Josh Finnie <josh@jfin.us>",
+  "workspaces": [
+    "demo",
+    "packages/*"
+  ],
+  "scripts": {
+    "bump:patch": "npm --workspaces --git-tag-version false version patch && npm --git-tag-version false version patch",
+    "bump:minor": "npm --workspaces --git-tag-version false version minor && npm --git-tag-version false version minor",
+    "bump:major": "npm --workspaces --git-tag-version false version major && npm --git-tag-version false version major",
+    "start": "astro --project-root demo dev",
+    "build": "astro --project-root demo build",
+    "serve": "astro --project-root demo preview",
+    "release": "npm --workspaces publish --access public"
+  },
+  "devDependencies": {
+    "astro": "latest"
+  },
+  "private": true
+}

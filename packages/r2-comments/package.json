@@ -1,0 +1,29 @@
+{
+  "name": "astro-r2-comments",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": "./index.js",
+    "./endpoints/*": "./src/endpoints/*.js",
+    "./components/*": "./src/components/*.astro"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "src"
+  ],
+  "keywords": [
+    "astro-integration",
+    "comments",
+    "cloudflare-r2"
+  ],
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0"
+  },
+  "private": true
+}

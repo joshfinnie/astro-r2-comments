@@ -1,0 +1,85 @@
+---
+import { R2Comment } from 'astro-r2-comments';
+
+const postId = 'example-post-1';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Astro R2 Comments Demo</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f5f5f5;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      header {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #0066cc;
+        margin-bottom: 0.5rem;
+      }
+
+      .post-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .post-content h2 {
+        margin-bottom: 1rem;
+      }
+
+      .post-content p {
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Astro R2 Comments Demo</h1>
+        <p>A demonstration of the astro-r2-comments integration</p>
+      </header>
+
+      <article class="post-content">
+        <h2>Sample Blog Post</h2>
+        <p>
+          This is a sample blog post to demonstrate the comment system. The comments below
+          are stored in Cloudflare R2 (or a mock storage in development).
+        </p>
+        <p>
+          Try leaving a comment below! The system includes basic spam filtering and
+          optional comment approval.
+        </p>
+      </article>
+
+      <R2Comment id={postId} />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+---
+import CommentList from './CommentList.astro';
+import CommentForm from './CommentForm.astro';
+
+export interface Props {
+  postId: string;
+  className?: string;
+  showForm?: boolean;
+}
+
+const { postId, className = '', showForm = true } = Astro.props;
+---
+
+<section class={`comments-section ${className}`}>
+  <CommentList postId={postId} />
+  {showForm && <CommentForm postId={postId} />}
+</section>
+
+<style>
+  .comments-section {
+    margin: 3rem 0;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+</style>

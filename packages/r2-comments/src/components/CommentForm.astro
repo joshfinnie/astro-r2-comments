@@ -1,0 +1,195 @@
+---
+export interface Props {
+  postId: string;
+  className?: string;
+}
+
+const { postId, className = '' } = Astro.props;
+---
+
+<div class={`comment-form ${className}`} data-post-id={postId}>
+  <h3>Leave a Comment</h3>
+  <form id="comment-form">
+    <div class="form-group">
+      <label for="author">Name (required)</label>
+      <input
+        type="text"
+        id="author"
+        name="author"
+        required
+        minlength="2"
+        maxlength="100"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email (optional)</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        maxlength="100"
+      />
+      <small>Your email will not be published</small>
+    </div>
+
+    <div class="form-group">
+      <label for="content">Comment (required)</label>
+      <textarea
+        id="content"
+        name="content"
+        required
+        minlength="10"
+        maxlength="5000"
+        rows="5"
+      ></textarea>
+    </div>
+
+    <button type="submit">Submit Comment</button>
+    <div class="form-message" role="status" aria-live="polite"></div>
+  </form>
+</div>
+
+<style>
+  .comment-form {
+    margin: 2rem 0;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  small {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  button {
+    padding: 0.75rem 1.5rem;
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: #0052a3;
+  }
+
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .form-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+    display: none;
+  }
+
+  .form-message.success {
+    display: block;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .form-message.error {
+    display: block;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .form-message.pending {
+    display: block;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('comment-form') as HTMLFormElement;
+  const messageEl = form?.querySelector('.form-message') as HTMLDivElement;
+  const postId = form?.closest('[data-post-id]')?.getAttribute('data-post-id');
+
+  if (form && messageEl && postId) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+      // Disable submit button
+      submitButton.disabled = true;
+      messageEl.className = 'form-message';
+      messageEl.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/comments/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            postId,
+            author: formData.get('author'),
+            email: formData.get('email') || undefined,
+            content: formData.get('content'),
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          if (result.comment.pending) {
+            messageEl.className = 'form-message pending';
+            messageEl.textContent = 'Thank you! Your comment is pending approval.';
+          } else {
+            messageEl.className = 'form-message success';
+            messageEl.textContent = 'Thank you! Your comment has been posted.';
+
+            // Reload comments
+            window.dispatchEvent(new CustomEvent('comments:reload'));
+          }
+          form.reset();
+        } else {
+          throw new Error(result.error || 'Failed to submit comment');
+        }
+      } catch (error) {
+        messageEl.className = 'form-message error';
+        messageEl.textContent = error instanceof Error ? error.message : 'An error occurred. Please try again.';
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  }
+</script>
