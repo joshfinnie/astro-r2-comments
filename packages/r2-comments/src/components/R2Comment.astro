@@ -259,7 +259,7 @@ const { id, class: className = '', showForm = true } = Astro.props;
           emptyEl.style.display = 'none';
           itemsEl.innerHTML = '';
 
-          const response = await fetch(`/api/comments/${encodeURIComponent(postId)}`);
+          const response = await fetch(`/api/comments/${encodeURIComponent(postId || "")}`);
 
           if (!response.ok) {
             throw new Error('Failed to fetch comments');

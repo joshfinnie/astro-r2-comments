@@ -43,7 +43,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // Access R2 bucket from Cloudflare runtime
     // @ts-expect-error - runtime types vary by adapter
     const bucket = locals?.runtime?.env?.COMMENTS_BUCKET;
 
@@ -61,7 +60,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
         ? __R2_COMMENTS_CONFIG__
         : { requireApproval: false, enableSpamFilter: false };
 
-    // Create comment object
     const comment: Comment = {
       id: storage.generateCommentId(),
       postId: data.postId,
@@ -72,7 +70,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       approved: !config.requireApproval, // Auto-approve if not required
     };
 
-    // Basic spam detection
     if (config.enableSpamFilter) {
       const spamIndicators = [
         /https?:\/\//gi, // Multiple URLs
