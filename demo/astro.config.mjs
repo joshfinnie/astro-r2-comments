@@ -50,8 +50,10 @@ export default defineConfig({
     resolve: {
       alias: {
         'astro-r2-comments': '../packages/r2-comments/index.ts',
-        'astro-r2-comments/endpoints/get': '../packages/r2-comments/src/endpoints/get.ts',
-        'astro-r2-comments/endpoints/submit': '../packages/r2-comments/src/endpoints/submit.ts',
+        'astro-r2-comments/endpoints/get':
+          '../packages/r2-comments/src/endpoints/get.ts',
+        'astro-r2-comments/endpoints/submit':
+          '../packages/r2-comments/src/endpoints/submit.ts',
       },
       preserveSymlinks: true,
     },

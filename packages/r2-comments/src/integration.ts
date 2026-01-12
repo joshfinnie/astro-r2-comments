@@ -1,5 +1,5 @@
-import type { AstroIntegration } from 'astro';
 import type { R2Bucket } from '@cloudflare/workers-types';
+import type { AstroIntegration } from 'astro';
 
 export interface R2CommentsOptions {
   /**
@@ -31,14 +31,14 @@ export function r2Comments(options: R2CommentsOptions): AstroIntegration {
   return {
     name: 'astro-r2-comments',
     hooks: {
-      'astro:config:setup': ({ config, injectRoute, updateConfig }) => {
+      'astro:config:setup': ({ injectRoute, updateConfig }) => {
         console.log('Initializing astro-r2-comments integration...');
 
         // Store options in Astro config for runtime access
         updateConfig({
           vite: {
             define: {
-              '__R2_COMMENTS_CONFIG__': JSON.stringify({
+              __R2_COMMENTS_CONFIG__: JSON.stringify({
                 prefix: options.prefix || 'comments/',
                 requireApproval: options.requireApproval || false,
                 enableSpamFilter: options.enableSpamFilter || false,

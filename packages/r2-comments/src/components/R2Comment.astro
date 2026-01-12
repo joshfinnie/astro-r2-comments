@@ -9,7 +9,6 @@ const { id, class: className = '', showForm = true } = Astro.props;
 ---
 
 <section class={`r2-comments ${className}`} data-post-id={id}>
-  <!-- Comments List -->
   <div class="r2-comments-list">
     <h3>Comments</h3>
     <div class="r2-comments-container">
@@ -20,7 +19,6 @@ const { id, class: className = '', showForm = true } = Astro.props;
     </div>
   </div>
 
-  <!-- Comment Form -->
   {showForm && (
     <div class="r2-comment-form">
       <h3>Leave a Comment</h3>
@@ -304,7 +302,6 @@ const { id, class: className = '', showForm = true } = Astro.props;
         }
       }
 
-      // Initialize form
       const form = container.querySelector('.r2-form') as HTMLFormElement;
       const messageEl = container.querySelector('.r2-form-message') as HTMLDivElement;
 
@@ -357,7 +354,6 @@ const { id, class: className = '', showForm = true } = Astro.props;
         });
       }
 
-      // Load comments on init
       loadComments();
     });
   }
@@ -368,7 +364,6 @@ const { id, class: className = '', showForm = true } = Astro.props;
     return div.innerHTML;
   }
 
-  // Initialize on page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeComments);
   } else {

@@ -148,10 +148,8 @@ const { postId, className = '' } = Astro.props;
     return div.innerHTML;
   }
 
-  // Load comments on page load
   loadComments();
 
-  // Reload when new comment is posted
   window.addEventListener('comments:reload', () => {
     loadComments();
   });

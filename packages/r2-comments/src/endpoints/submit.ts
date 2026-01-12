@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
-import { R2CommentStorage } from '../lib/r2-client.js';
 import type { Comment } from '../lib/r2-client.js';
+import { R2CommentStorage } from '../lib/r2-client.js';
 
 interface CommentSubmission {
   postId: string;
@@ -37,10 +37,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const data = await request.json();
 
     if (!validateCommentSubmission(data)) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid comment data' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'Invalid comment data' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     // Access R2 bucket from Cloudflare runtime
@@ -50,15 +50,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (!bucket) {
       return new Response(
         JSON.stringify({ error: 'R2 bucket not configured' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        { status: 500, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
     const storage = new R2CommentStorage({ bucket });
 
-    const config = typeof __R2_COMMENTS_CONFIG__ !== 'undefined'
-      ? __R2_COMMENTS_CONFIG__
-      : { requireApproval: false, enableSpamFilter: false };
+    const config =
+      typeof __R2_COMMENTS_CONFIG__ !== 'undefined'
+        ? __R2_COMMENTS_CONFIG__
+        : { requireApproval: false, enableSpamFilter: false };
 
     // Create comment object
     const comment: Comment = {
@@ -80,7 +81,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       const urlCount = (comment.content.match(/https?:\/\//gi) || []).length;
       const hasSpamWords = spamIndicators.some((pattern) =>
-        pattern.test(comment.content)
+        pattern.test(comment.content),
       );
 
       if (urlCount > 2 || hasSpamWords) {
@@ -98,13 +99,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
           pending: !comment.approved,
         },
       }),
-      { status: 201, headers: { 'Content-Type': 'application/json' } }
+      { status: 201, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (error) {
     console.error('Error saving comment:', error);
-    return new Response(
-      JSON.stringify({ error: 'Failed to save comment' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: 'Failed to save comment' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };

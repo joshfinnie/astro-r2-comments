@@ -24,9 +24,13 @@
     "start": "astro --project-root demo dev",
     "build": "astro --project-root demo build",
     "serve": "astro --project-root demo preview",
-    "release": "npm --workspaces publish --access public"
+    "release": "npm --workspaces publish --access public",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.11",
     "astro": "latest"
   },
   "private": true

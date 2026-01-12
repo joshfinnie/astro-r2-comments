@@ -148,7 +148,6 @@ const { postId, className = '' } = Astro.props;
       const formData = new FormData(form);
       const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
 
-      // Disable submit button
       submitButton.disabled = true;
       messageEl.className = 'form-message';
       messageEl.style.display = 'none';
@@ -177,7 +176,6 @@ const { postId, className = '' } = Astro.props;
             messageEl.className = 'form-message success';
             messageEl.textContent = 'Thank you! Your comment has been posted.';
 
-            // Reload comments
             window.dispatchEvent(new CustomEvent('comments:reload'));
           }
           form.reset();
